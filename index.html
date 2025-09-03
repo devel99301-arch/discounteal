@@ -1,0 +1,21 @@
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+(async () => {
+  try {
+    const LIFF_ID = "2008019441-GRwnZZ32";
+    await liff.init({ liffId: LIFF_ID });
+
+    // 若不是在 LINE/不是 LIFF 視窗，強制用 deep-link 以 LIFF 方式開啟本頁
+    let inLiff = false; try { inLiff = !!liff.getContext(); } catch(_) {}
+    if (!liff.isInClient() || !inLiff) {
+      location.href = "line://app/" + LIFF_ID + location.search;
+      return;
+    }
+
+    const sp  = new URL(location.href).searchParams;
+    const msg = decodeURIComponent(sp.get("msg") || "我好");
+    await liff.sendMessages([{ type: "text", text: msg }]);
+    try { liff.closeWindow(); } catch {}
+  } catch (e) {}
+})();
+</script>
