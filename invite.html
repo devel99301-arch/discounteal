@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <title>限時折價券－立即領取</title>
+
+  <!-- OGP：LINE 貼文的預覽卡 -->
+  <meta property="og:title" content="限時折價券！點我領取 88 折好康">
+  <meta property="og:description" content="點開自動領取優惠，限時 3 天！先搶先贏！">
+  <meta property="og:url" content="https://devel99301-arch.github.io/pranktime/invite.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://devel99301-arch.github.io/pranktime/serve.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="折價券活動預覽圖">
+
+  <!-- （可選）Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="限時折價券！點我領取 88 折好康">
+  <meta name="twitter:description" content="點開自動領取優惠，限時 3 天！先搶先贏！">
+  <meta name="twitter:image" content="https://devel99301-arch.github.io/pranktime/serve.jpg">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <style>
+    body { font:14px/1.6 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial;
+           display:flex; align-items:center; justify-content:center; min-height:100vh; margin:0; color:#444 }
+    .wrap { text-align:center }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p>載入中…</p>
+    <noscript>若未自動跳轉，請 <a id="fallback" href="#">點我</a></noscript>
+  </div>
+
+  <script>
+    (function () {
+      const LIFF_ID = "2008019441-GRwnZZ32";           // ← 你的 LIFF ID
+      const params = new URLSearchParams(location.search);
+      if (!params.has('msg')) params.set('msg', '我好'); // 預設訊息
+      const target = "https://liff.line.me/" + LIFF_ID + "?" + params.toString();
+
+      // 無感跳轉到 LIFF
+      location.replace(target);
+
+      // noscript 後備
+      const fb = document.getElementById('fallback');
+      if (fb) fb.href = target;
+    })();
+  </script>
+</body>
+</html>
