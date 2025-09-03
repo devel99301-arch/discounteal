@@ -1,21 +1,31 @@
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script>
-(async () => {
-  try {
-    const LIFF_ID = "2008019441-GRwnZZ32";
-    await liff.init({ liffId: LIFF_ID });
+<!-- LIFF SDK -->
+  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <script>
+  (async () => {
+    try {
+      const LIFF_ID = "2008019441-GRwnZZ32"; // 大小寫要完全一致
+      await liff.init({ liffId: LIFF_ID });
 
-    // 若不是在 LINE/不是 LIFF 視窗，強制用 deep-link 以 LIFF 方式開啟本頁
-    let inLiff = false; try { inLiff = !!liff.getContext(); } catch(_) {}
-    if (!liff.isInClient() || !inLiff) {
-      location.href = "line://app/" + LIFF_ID + location.search;
-      return;
+      // 不在 LINE 內就導回 LINE 開啟（讓 sendMessages 可用）
+      if (!liff.isInClient()) {
+        location.href = "line://app/" + LIFF_ID + location.search;
+        return;
+      }
+
+      // 讀取 ?msg= 查詢參數（沒有就用預設）
+      const sp  = new URL(location.href).searchParams;
+      const msg = decodeURIComponent(sp.get("msg") || "我好");
+
+      // 靜默送出訊息，不顯示任何 log
+      await liff.sendMessages([{ type: "text", text: msg }]);
+
+      // 關閉視窗
+      try { liff.closeWindow(); } catch {}
+    } catch (e) {
+      // 也不顯示錯誤，完全靜默；若你要偵錯再暫時打開 console
+      // console.error(e);
     }
-
-    const sp  = new URL(location.href).searchParams;
-    const msg = decodeURIComponent(sp.get("msg") || "我好");
-    await liff.sendMessages([{ type: "text", text: msg }]);
-    try { liff.closeWindow(); } catch {}
-  } catch (e) {}
-})();
-</script>
+  })();
+  </script>
+</body>
+</html>
