@@ -7,7 +7,10 @@
   try {
     const LIFF_ID = "2008019441-GRwnZZ32";
     log("init…");
-    await liff.init({ liffId: LIFF_ID });
+  await liff.init({
+    liffId: LIFF_ID,
+    withLoginOnExternalBrowser: true  // ← 一定要加這行！
+});
 
     // 確認：真的在 LIFF 視窗環境
     let inLiff = false;
