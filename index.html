@@ -1,31 +1,43 @@
 <!-- LIFF SDK -->
-  <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-  <script>
-  (async () => {
-    try {
-      const LIFF_ID = "2008019441-GRwnZZ32"; // 大小寫要完全一致
-      await liff.init({ liffId: LIFF_ID });
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<div id="log" style="font:14px/1.5 -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial; padding:16px;"></div>
+<script>
+(async () => {
+  const log = (m) => { const el = document.getElementById('log'); if (el) el.innerText += (m + '\n'); };
+  try {
+    const LIFF_ID = "2008019441-GRwnZZ32";
+    log("init…");
+    await liff.init({ liffId: LIFF_ID });
 
-      // 不在 LINE 內就導回 LINE 開啟（讓 sendMessages 可用）
-      if (!liff.isInClient()) {
-        location.href = "line://app/" + LIFF_ID + location.search;
-        return;
-      }
+    // 確認：真的在 LIFF 視窗環境
+    let inLiff = false;
+    try { inLiff = !!liff.getContext(); } catch (_) { inLiff = false; }
+    log("isInClient=" + liff.isInClient() + ", inLiff=" + inLiff);
 
-      // 讀取 ?msg= 查詢參數（沒有就用預設）
-      const sp  = new URL(location.href).searchParams;
-      const msg = decodeURIComponent(sp.get("msg") || "我好");
-
-      // 靜默送出訊息，不顯示任何 log
-      await liff.sendMessages([{ type: "text", text: msg }]);
-
-      // 關閉視窗
-      try { liff.closeWindow(); } catch {}
-    } catch (e) {
-      // 也不顯示錯誤，完全靜默；若你要偵錯再暫時打開 console
-      // console.error(e);
+    if (!liff.isInClient() || !inLiff) {
+      // 用 LIFF deep link 重新開啟本頁（把原參數帶回去）
+      const url = "line://app/" + LIFF_ID + location.search;
+      log("redirect -> " + url);
+      location.href = url;
+      return;
     }
-  })();
-  </script>
-</body>
-</html>
+
+    // 讀取參數；若 URL 編碼不完整會丟錯，所以先保守處理
+    const sp = new URL(location.href).searchParams;
+    let raw = sp.get("msg");
+    if (!raw || raw.trim() === "") raw = "我好";
+
+    let msg = raw;
+    try { msg = decodeURIComponent(raw); } catch (e) { /* 如果是未編碼或截斷，就直接用原字串 */ }
+
+    log("send: " + msg);
+
+    await liff.sendMessages([{ type: "text", text: msg }]);
+    log("sent, closing…");
+    try { liff.closeWindow(); } catch {}
+  } catch (e) {
+    // 顯示錯誤，方便你知道卡哪裡（正常後可移除這行）
+    document.getElementById('log').innerText += "ERROR: " + (e && (e.message || e)) + "\n";
+  }
+})();
+</script>
